@@ -69,7 +69,7 @@ spring:
 
 api:
   delivery:
-    url: http://delivery:8082
+    url: http://delivery:8080
 
 feign:
   hystrix:
