@@ -41,6 +41,18 @@ server:
 api:
   delivery:
     url: http://localhost:8082
+  laundry:
+    url: http://localhost:8084
+
+feign:
+  hystrix:
+    enabled: true
+
+hystrix:
+  command:
+    # 전역설정
+    default:
+      execution.isolation.thread.timeoutInMilliseconds: 610
 ---
 
 spring:
@@ -69,7 +81,9 @@ spring:
 
 api:
   delivery:
-    url: http://delivery:8082
+    url: http://delivery:8080
+  laundry:
+    url: http://laundry:8080
 
 feign:
   hystrix:

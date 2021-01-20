@@ -27,6 +27,7 @@ public class MypageViewHandler {
                 mypage.setOrderId(ordered.getId());
                 mypage.setProductId(ordered.getProductId());
                 mypage.setQty(ordered.getQty());
+                mypage.setStatus(ordered.getStatus());
                 // view 레파지 토리에 save
                 mypageRepository.save(mypage);
             }
@@ -35,6 +36,41 @@ public class MypageViewHandler {
         }
     }
 
+    @StreamListener(KafkaProcessor.INPUT)
+    public void whenOrdered_then_CREATE_1 (@Payload Returned returned) {
+        try {
+            if (returned.isMe()) {
+                // view 객체 생성
+                Mypage mypage = new Mypage();
+                // view 객체에 이벤트의 Value 를 set 함
+                mypage.setOrderId(returned.getId());
+                mypage.setProductId(returned.getProductId());
+                mypage.setQty(returned.getQty());
+                // view 레파지 토리에 save
+                mypageRepository.save(mypage);
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    @StreamListener(KafkaProcessor.INPUT)
+    public void whenOrdered_then_CREATE_1 (@Payload Exchanged exchanged) {
+        try {
+            if (exchanged.isMe()) {
+                // view 객체 생성
+                Mypage mypage = new Mypage();
+                // view 객체에 이벤트의 Value 를 set 함
+                mypage.setOrderId(exchanged.getId());
+                mypage.setProductId(exchanged.getProductId());
+                mypage.setQty(exchanged.getQty());
+                // view 레파지 토리에 save
+                mypageRepository.save(mypage);
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
 
     @StreamListener(KafkaProcessor.INPUT)
     public void whenShipped_then_UPDATE_1(@Payload Shipped shipped) {
@@ -54,6 +90,27 @@ public class MypageViewHandler {
             e.printStackTrace();
         }
     }
+
+    @StreamListener(KafkaProcessor.INPUT)
+    public void whenWashed_then_UPDATE_1(@Payload Washed washed) {
+        try {
+            if (washed.isMe()) {
+                // view 객체 생성
+                Mypage mypage = new Mypage();
+                // view 객체에 이벤트의 Value 를 set 함
+                mypage.setOrderId(washed.getId());
+                mypage.setProductId(washed.getProductId());
+                mypage.setQty(washed.getQty());
+                mypage.setStatus(washed.getStatus());
+                // view 레파지 토리에 save
+                mypageRepository.save(mypage);
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+
     @StreamListener(KafkaProcessor.INPUT)
     public void whenDeliveryCanceled_then_UPDATE_2(@Payload DeliveryCanceled deliveryCanceled) {
         try {
@@ -72,4 +129,21 @@ public class MypageViewHandler {
         }
     }
 
+    @StreamListener(KafkaProcessor.INPUT)
+    public void whenWashCanceled_then_UPDATE_1(@Payload WashCanceled washCanceled) {
+        try {
+            if (washCanceled.isMe()) {
+                // view 객체 조회
+                List<Mypage> mypageList = mypageRepository.findByOrderId(washCanceled.getOrderId());
+                for(Mypage mypage : mypageList){
+                    // view 객체에 이벤트의 eventDirectValue 를 set 함
+                    mypage.setStatus(washCanceled.getStatus());
+                    // view 레파지 토리에 save
+                    mypageRepository.save(mypage);
+                }
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
 }

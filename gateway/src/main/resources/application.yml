@@ -20,6 +20,10 @@ spring:
           uri: http://localhost:8083
           predicates:
             - Path= /mypages/**
+        - id: laundry
+          uri: http://localhost:8084
+          predicates:
+            - Path=/laundries/**,/cancellations/**
       globalcors:
         corsConfigurations:
           '[/**]':
@@ -51,6 +55,10 @@ spring:
           uri: http://customercenter:8080
           predicates:
             - Path= /mypages/**
+        - id: laundry
+          uri: http://laundry:8080
+          predicates:
+            - Path=/laundries/**,/cancellations/**
       globalcors:
         corsConfigurations:
           '[/**]':

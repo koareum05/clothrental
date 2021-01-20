@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: customercenter
-          image: username/customercenter:latest
+          image: clothrentalt.azurecr.io/customercenter
           ports:
             - containerPort: 8080
           readinessProbe:

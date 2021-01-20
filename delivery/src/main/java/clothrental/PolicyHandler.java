@@ -56,4 +56,19 @@ public class PolicyHandler{
         }
     }
 
+    @StreamListener(KafkaProcessor.INPUT)
+    public void wheneverOrdered_Ship(@Payload Exchanged exchanged){
+
+        if(exchanged.isMe()){
+            // To-Do : SMS발송, CJ Logistics 연계, ...
+            Delivery delivery = new Delivery();
+            delivery.setOrderId(exchanged.getId());
+            delivery.setStatus("Exchange Started");
+
+            deliveryRepository.save(delivery);
+
+            System.out.println("##### listener exchanged : " + exchanged.toJson());
+        }
+    }
+
 }

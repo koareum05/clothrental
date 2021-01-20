@@ -36,16 +36,61 @@ public class Order {
             BeanUtils.copyProperties(this, returned);
             returned.publishAfterCommit();
         }
+        if (Objects.equals(status, "Exchange")){
+            Exchanged exchanged = new Exchanged();
+            BeanUtils.copyProperties(this, exchanged);
+            exchanged.publishAfterCommit();
+
+        }
+        if (Objects.equals(status, "Wash")){
+            Washed washed = new Washed();
+            BeanUtils.copyProperties(this, washed);
+            washed.publishAfterCommit();
+
+        }
 
     }
 
+    // 서킷브레이크 테스트 시 주석 해제할 것
     @PostUpdate
     public void onPostUpdate(){
-        System.out.println("################# Order Status Updated and Update Event raised..!!");
-    }
 
+/*
+    OrdereCancelled ordereCancelled = new OrdereCancelled();
+        BeanUtils.copyProperties(this, ordereCancelled);
+        ordereCancelled.publishAfterCommit();
+
+    //Following code causes dependency to external APIs
+    // it is NOT A GOOD PRACTICE. instead, Event-Policy mapping is recommended.
+
+    clothrental.external.Cancellation cancellation = new clothrental.external.Cancellation();
+    // mappings goes here
+    // 아래 this는 Order 어그리게이트
+        cancellation.setOrderId(this.getId());
+        cancellation.setStatus("Delivery Cancelled");
+        OrderApplication.applicationContext.getBean(clothrental.external.CancellationService.class)
+            .cancelship(cancellation);
+*/
+
+        WashCancelled washCancelled = new WashCancelled();
+            BeanUtils.copyProperties(this, washCancelled);
+            washCancelled.publishAfterCommit();
+
+        //Following code causes dependency to external APIs
+        // it is NOT A GOOD PRACTICE. instead, Event-Policy mapping is recommended.
+
+        clothrental.external.WashCancellation washCancellation = new clothrental.external.WashCancellation();
+        // mappings goes here
+        // 아래 this는 Order 어그리게이트
+            washCancellation.setOrderId(this.getId());
+            washCancellation.setStatus("Laundry Cancelled");
+            OrderApplication.applicationContext.getBean(clothrental.external.WashCancellationService.class)
+                .cancelwash(washCancellation);
+    }
+//
     @PreRemove
     public void onPreRemove(){
+/*
         OrdereCancelled ordereCancelled = new OrdereCancelled();
         BeanUtils.copyProperties(this, ordereCancelled);
         ordereCancelled.publishAfterCommit();
@@ -59,8 +104,23 @@ public class Order {
         cancellation.setOrderId(this.getId());
         cancellation.setStatus("Delivery Cancelled");
         OrderApplication.applicationContext.getBean(clothrental.external.CancellationService.class)
-            .cancelship(cancellation);
+                .cancelship(cancellation);
+*/
 
+        WashCancelled washCancelled = new WashCancelled();
+        BeanUtils.copyProperties(this, washCancelled);
+        washCancelled.publishAfterCommit();
+
+        //Following code causes dependency to external APIs
+        // it is NOT A GOOD PRACTICE. instead, Event-Policy mapping is recommended.
+
+        clothrental.external.WashCancellation washCancellation = new clothrental.external.WashCancellation();
+        // mappings goes here
+        // 아래 this는 Order 어그리게이트
+        washCancellation.setOrderId(this.getId());
+        washCancellation.setStatus("Laundry Cancelled");
+        OrderApplication.applicationContext.getBean(clothrental.external.WashCancellationService.class)
+                .cancelwash(washCancellation);
 
     }
 
